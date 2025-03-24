@@ -14,6 +14,7 @@
             height: 100vh;
             background: linear-gradient(45deg, #1e1e1e, #3a3a3a);
             color: white;
+            overflow: hidden;
         }
         .container {
             display: flex;
@@ -24,6 +25,7 @@
             border-radius: 15px;
             box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.2);
             animation: fadeIn 1s ease-in-out;
+            position: relative;
         }
         h1 {
             color: #f39c12;
@@ -80,6 +82,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1"></script>
 </head>
 <body>
     <div class="container">
@@ -130,6 +133,9 @@
             const winner = checkWinner();
             if (winner) {
                 statusElement.textContent = `${winner} Wins!`;
+                if (winner === 'X') {
+                    confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+                }
             } else if (!board.includes('')) {
                 statusElement.textContent = 'It\'s a Draw!';
             } else {
