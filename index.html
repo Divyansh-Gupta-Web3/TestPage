@@ -12,12 +12,20 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f8f9fa;
+            background: linear-gradient(45deg, #1e1e1e, #3a3a3a);
+            color: white;
         }
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            background: #2c2c2c;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            color: #f1c40f;
         }
         .board {
             display: grid;
@@ -32,14 +40,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: white;
+            background: #444;
             font-size: 2rem;
             font-weight: bold;
-            border: 2px solid #333;
+            border: 2px solid #f1c40f;
             cursor: pointer;
+            color: #f1c40f;
+            transition: background 0.3s ease;
         }
         .cell:hover {
-            background: #e9ecef;
+            background: #666;
         }
         .reset-btn {
             margin-top: 20px;
@@ -47,12 +57,18 @@
             font-size: 16px;
             cursor: pointer;
             border: none;
-            background: #007bff;
+            background: #e74c3c;
             color: white;
             border-radius: 5px;
+            transition: background 0.3s ease;
         }
         .reset-btn:hover {
-            background: #0056b3;
+            background: #c0392b;
+        }
+        #status {
+            margin-top: 15px;
+            font-size: 20px;
+            color: #f1c40f;
         }
     </style>
 </head>
@@ -60,8 +76,8 @@
     <div class="container">
         <h1>Tic-Tac-Toe</h1>
         <div class="board" id="board"></div>
-        <button class="reset-btn" onclick="resetGame()">Reset</button>
-        <h2 id="status"></h2>
+        <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+        <h2 id="status">Player X's Turn</h2>
     </div>
 
     <script>
@@ -106,9 +122,9 @@
             if (winner) {
                 statusElement.textContent = `${winner} Wins!`;
             } else if (!board.includes('')) {
-                statusElement.textContent = 'Draw!';
+                statusElement.textContent = 'It\'s a Draw!';
             } else {
-                statusElement.textContent = `Player X's Turn`;
+                statusElement.textContent = `Player ${currentPlayer}'s Turn`;
             }
         }
 
