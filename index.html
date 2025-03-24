@@ -1,66 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Facebook Login JavaScript Example</title>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            font-size: 2rem;
+            font-weight: bold;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+        .cell:hover {
+            background: #e9ecef;
+        }
+        .reset-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        .reset-btn:hover {
+            background: #0056b3;
+        }
+    </style>
 </head>
 <body>
-<script>
+    <div class="container">
+        <h1>Tic-Tac-Toe</h1>
+        <div class="board" id="board"></div>
+        <button class="reset-btn" onclick="resetGame()">Reset</button>
+        <h2 id="status"></h2>
+    </div>
 
-  function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
-    console.log('statusChangeCallback');
-    console.log(response);                   // The current login status of the person.
-    if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-      testAPI();  
-    } else {                                 // Not logged into your webpage or we are unable to tell.
-      document.getElementById('status').innerHTML = 'Please log ' +
-        'into this webpage.';
-    }
-  }
+    <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        const boardElement = document.getElementById('board');
+        const statusElement = document.getElementById('status');
+        let currentPlayer = 'X';
 
+        function createBoard() {
+            boardElement.innerHTML = '';
+            board.forEach((cell, index) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('cell');
+                cellElement.dataset.index = index;
+                cellElement.textContent = cell;
+                cellElement.addEventListener('click', handleMove);
+                boardElement.appendChild(cellElement);
+            });
+        }
 
-  function checkLoginState() {               // Called when a person is finished with the Login Button.
-    FB.getLoginStatus(function(response) {   // See the onlogin handler
-      statusChangeCallback(response);
-    });
-  }
+        function handleMove(event) {
+            const index = event.target.dataset.index;
+            if (board[index] !== '' || checkWinner() || currentPlayer === 'O') return;
+            board[index] = 'X';
+            updateGame();
+            if (!checkWinner() && board.includes('')) {
+                setTimeout(computerMove, 500);
+            }
+        }
 
+        function computerMove() {
+            let availableMoves = board.map((cell, index) => cell === '' ? index : null).filter(index => index !== null);
+            if (availableMoves.length === 0) return;
+            let move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+            board[move] = 'O';
+            updateGame();
+        }
 
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '440531902678919',
-      cookie     : true,                     // Enable cookies to allow the server to access the session.
-      xfbml      : true,                     // Parse social plugins on this webpage.
-      version    : 'v20.0'           // Use this Graph API version for this call.
-    });
+        function updateGame() {
+            createBoard();
+            const winner = checkWinner();
+            if (winner) {
+                statusElement.textContent = `${winner} Wins!`;
+            } else if (!board.includes('')) {
+                statusElement.textContent = 'Draw!';
+            } else {
+                statusElement.textContent = `Player X's Turn`;
+            }
+        }
 
+        function checkWinner() {
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            return null;
+        }
 
-    FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
-      statusChangeCallback(response);        // Returns the login status.
-    });
-  };
- 
-  function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
-    console.log('Welcome!  Fetching your information.... ');
-    FB.api('/me', function(response) {
-      console.log('Successful login for: ' + response.name);
-      document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
-    });
-  }
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            statusElement.textContent = `Player X's Turn`;
+            createBoard();
+        }
 
-</script>
-
-
-<!-- The JS SDK Login Button -->
-
-<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-</fb:login-button>
-
-<div id="status">
-</div>
-
-<!-- Load the JS SDK asynchronously -->
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+        createBoard();
+    </script>
 </body>
 </html>
